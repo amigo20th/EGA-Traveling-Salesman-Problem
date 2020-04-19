@@ -1,16 +1,8 @@
 import numpy as np
-import functools
 import Fitness_TSP
-from collections import Counter
+import matplotlib.pyplot as plt
 
 
-# def makeGen(l_gen):
-#     # This function make a string with (0,1) of length l_gen
-#     gen = ""
-#     list_bin = np.random.randint(2, size=l_gen)
-#     for count in range(l_gen):
-#         gen += str(list_bin[count])
-#     return (gen)
 
 def genInitPop(individuals, var):
     # This function create the first population
@@ -79,13 +71,13 @@ def mutation(I_double, n, n_var, B2M):
 ### Variables for flexibility of the algorithm
 # number of variables for one solution
 # in this case, we have the number of cities
-n_vars = 10
+n_vars = 50
 
 ### Variables what EGA needs
 # Number of generations
-G = 5
+G = 2000
 # Number of individuals
-n = 10
+n = 100
 # Length of chromosome
 L = n_vars
 # Population
@@ -93,7 +85,7 @@ I = np.ndarray(shape=(n, n_vars), dtype=np.int16)
 # Crossing probability
 Pc = 0.9
 # Mutation probability
-Pm = 0.0
+Pm = 0.028
 # list of fitness
 fitness = np.ndarray(shape=(2, n), dtype=float)
 # Expected number of mutations for each generation
@@ -122,7 +114,7 @@ for gen in range(G):
     count = 0
     for i in range(fitness_double.shape[1]):
         fitness_double[0][i] = count
-        fitness_double[1][i] = Fitness_TSP.fitness(I_double[i], n)
+        fitness_double[1][i] = Fitness_TSP.fitness(I_double[i])
         count += 1
     # Order by fitness
     fitness_double = fitness_double[:, fitness_double[1].argsort()]
@@ -138,3 +130,21 @@ for gen in range(G):
 
 print("Aproaches: ")
 print(list(I[0]), fitness_double[1][0])
+print()
+
+way = []
+way = list(I[0])
+way.append(I[0][0])
+print("way: ", way)
+
+points = Fitness_TSP.return_points(way)
+print("points_transpuesta: ", points)
+points2=  np.transpose(points)
+
+print("primer punto:({}, {}) ".format(points[0][0:2], points[1][0:2]))
+plt.plot(points[0], points[1])
+plt.scatter(points[0], points[1], c='red')
+for inx, poi  in enumerate(I[0]):
+    plt.annotate(poi, (points[0][inx]+0.3, points[1][inx]+0.3))
+plt.show()
+
