@@ -21,10 +21,12 @@ df_dist = pd.DataFrame(data=matrix_dist, index=range(cities), columns=range(citi
 
 def fitness(arr_way):
     list_dist = []
-    for i in range(len(arr_way)-1):
-        point1 = arr_way[i]
-        point2 = arr_way[i+1]
-        list_dist.append(df_dist.iloc[point1, point2])#eucli_dins(df.loc[arr_way[i]], df.loc[arr_way[i + 1]]))
+    way_close = list(arr_way)
+    way_close.append(arr_way[0])
+    for i in range(len(way_close)-1):
+        point1 = way_close[i]
+        point2 = way_close[i+1]
+        list_dist.append(df_dist.iloc[point1, point2])
     return sum(list_dist)
 
 
@@ -33,6 +35,5 @@ def return_points(arr_way):
     for i in arr_way:
         list_points.append(np.array(df.loc[i]))
     return np.transpose(list_points)
-
 
 

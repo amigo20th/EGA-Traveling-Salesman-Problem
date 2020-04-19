@@ -72,10 +72,9 @@ def mutation(I_double, n, n_var, B2M):
 # number of variables for one solution
 # in this case, we have the number of cities
 n_vars = 50
-
-### Variables what EGA needs
+## Variables what EGA needs
 # Number of generations
-G = 2000
+G = 20000
 # Number of individuals
 n = 100
 # Length of chromosome
@@ -132,16 +131,11 @@ print("Aproaches: ")
 print(list(I[0]), fitness_double[1][0])
 print()
 
-way = []
 way = list(I[0])
 way.append(I[0][0])
-print("way: ", way)
 
 points = Fitness_TSP.return_points(way)
-print("points_transpuesta: ", points)
-points2=  np.transpose(points)
 
-print("primer punto:({}, {}) ".format(points[0][0:2], points[1][0:2]))
 plt.plot(points[0], points[1])
 plt.scatter(points[0], points[1], c='red')
 for inx, poi  in enumerate(I[0]):
