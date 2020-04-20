@@ -67,6 +67,15 @@ def mutation(I_double, n, n_var, B2M):
         I_tmp[f1][c1], I_tmp[f1][c2] = I_tmp[f1][c2], I_tmp[f1][c1]
     return I_tmp
 
+def mul_last_city(I_double, n, n_var, Pm):
+    tmp = np.random.random(1)
+    I_tmp = np.copy(I_double)
+    #if tmp < Pm:
+    chan = np.random.randint(0, n_var-1)
+    I_tmp[n-1] = I_tmp[0]
+    I_tmp[n-1][n_var-1], I_tmp[n-1][chan] = I_tmp[n-1][chan], I_tmp[n-1][n_var-1]
+    print("Entro en mutacion de ultimo, cambio {} por este {}".format(I_tmp[n-1][n_var-1], I_tmp[n-1][chan]))
+    return I_tmp
 
 ### Variables for flexibility of the algorithm
 # number of variables for one solution
@@ -74,9 +83,9 @@ def mutation(I_double, n, n_var, B2M):
 n_vars = 50
 ## Variables what EGA needs
 # Number of generations
-G = 20000
+G = 2000
 # Number of individuals
-n = 100
+n = 50
 # Length of chromosome
 L = n_vars
 # Population
@@ -118,6 +127,7 @@ for gen in range(G):
     # Order by fitness
     fitness_double = fitness_double[:, fitness_double[1].argsort()]
 
+
     # Apply Elitism
     ind_eli = fitness_double[0][0:n]
     ind_eli = np.array(ind_eli, dtype=np.int16)
@@ -127,12 +137,14 @@ for gen in range(G):
         count += 1
     print("best way {}, Best Travel Cost= {}".format(list(I[0]), fitness_double[1][0]))
 
-print("Aproaches: ")
-print(list(I[0]), fitness_double[1][0])
-print()
+    # Apply mutation in the last city
+    I = mul_last_city(I, n, n_vars, Pm)
 
 way = list(I[0])
-way.append(I[0][0])
+way.append(way[0])
+print("Aproaches: ")
+print(list(way), fitness_double[1][0])
+print()
 
 points = Fitness_TSP.return_points(way)
 
