@@ -23,7 +23,7 @@ def crossover(population, individuals, cities, Pc):
             c2 = np.random.randint(0, cities)
             if c2 < c1:
                 c1, c2 = c2, c1
-            arr_tmp1 = list(population[i])
+            arr_tmp1 = list(population[0])
             arr_tmp2 = list(population[n - i - 1])
             subset_spring1 = arr_tmp1[c1:c2]
             subset_spring2 = arr_tmp2[c1:c2]
@@ -65,16 +65,12 @@ def mutation(I_double, n, n_var, B2M):
         c1 = int(np.random.randint(0, n_vars))
         c2 = int(np.random.randint(0, n_vars))
         I_tmp[f1][c1], I_tmp[f1][c2] = I_tmp[f1][c2], I_tmp[f1][c1]
-    return I_tmp
-
-def mul_last_city(I_double, n, n_var, Pm):
-    tmp = np.random.random(1)
-    I_tmp = np.copy(I_double)
-    #if tmp < Pm:
+    # Special mutation for the last city
     chan = np.random.randint(0, n_var-1)
     I_tmp[n-1] = I_tmp[0]
     I_tmp[n-1][n_var-1], I_tmp[n-1][chan] = I_tmp[n-1][chan], I_tmp[n-1][n_var-1]
-    print("Entro en mutacion de ultimo, cambio {} por este {}".format(I_tmp[n-1][n_var-1], I_tmp[n-1][chan]))
+    print("Entro en mutacion de ultimo, cambio {} por este {}".format(I_tmp[n-1][n_var-1],
+                                                                      I_tmp[n-1][chan]))
     return I_tmp
 
 ### Variables for flexibility of the algorithm
@@ -85,7 +81,7 @@ n_vars = 50
 # Number of generations
 G = 2000
 # Number of individuals
-n = 50
+n = 100
 # Length of chromosome
 L = n_vars
 # Population
@@ -93,7 +89,7 @@ I = np.ndarray(shape=(n, n_vars), dtype=np.int16)
 # Crossing probability
 Pc = 0.9
 # Mutation probability
-Pm = 0.028
+Pm = 0.05
 # list of fitness
 fitness = np.ndarray(shape=(2, n), dtype=float)
 # Expected number of mutations for each generation
@@ -107,6 +103,12 @@ fitness_double = np.ndarray(shape=(2, 2 * n), dtype=float)
 
 # Initial population
 I = genInitPop(n, n_vars)
+
+# Save a best of the all generation
+champ = np.ndarray(shape=(n, n_vars), dtype= np.int16)
+champ = champ[0]
+champ = list(range(n_vars))
+fit_champ = Fitness_TSP.fitness(champ)
 
 for gen in range(G):
     # Double of length of the population
@@ -137,18 +139,22 @@ for gen in range(G):
         count += 1
     print("best way {}, Best Travel Cost= {}".format(list(I[0]), fitness_double[1][0]))
 
-    # Apply mutation in the last city
-    I = mul_last_city(I, n, n_vars, Pm)
+    # we compare the best of this generation with the champ
+    if fitness_double[1][0] < fit_champ:
+        champ = I[0]
+        fit_champ = fitness_double[1][0]
+        print("nuevo champ")
 
-way = list(I[0])
+way = list(champ)
 way.append(way[0])
 print("Aproaches: ")
-print(list(way), fitness_double[1][0])
+print(list(way), fit_champ)
 print()
 
 points = Fitness_TSP.return_points(way)
 
 plt.plot(points[0], points[1])
+plt.title("Traveling Salesman Problem")
 plt.scatter(points[0], points[1], c='red')
 for inx, poi  in enumerate(I[0]):
     plt.annotate(poi, (points[0][inx]+0.3, points[1][inx]+0.3))
